@@ -14,13 +14,8 @@ development:
 
 
 test:
-  adapter: postgresql
-  encoding: unicode
-  pool: 5
+  <<: *default
   database: wonderful_editor_test
-  username: postgres
-  password: postgres
-  host: localhost
 
 
 production:
