@@ -35,10 +35,6 @@ jobs:
           cp -v config/database.yml.ci config/database.yml
           bundle exec rails db:create
           bundle exec rails db:schema:load
-<<<<<<< HEAD
-=======
-
->>>>>>> rubocop-での修正
         env:
           RAILS_ENV: test
           POSTGRES_USER: postgres
