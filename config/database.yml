@@ -18,6 +18,7 @@ test:
   database: wonderful_editor_test
 
 
+
 production:
   <<: *default
   database: wonderful_editor_production
