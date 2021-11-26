@@ -1,5 +1,8 @@
 require "rails_helper"
 
 RSpec.describe ArticleLike, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  context " いいねボタンを押すとき " do
+    it " いいねが押される " do
+    end
+  end
 end
