@@ -15,14 +15,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  context " すでに同じ名前の name が存在している時 " do
-    it " エラーする " do
-      FactoryBot.create(:user, name: "foo")
-      user = FactoryBot.build(:user, name: "foo")
-      expect(user).to be_invalid
-    end
-  end
-
   context " email を指定していない時" do
     it " エラーする " do
       user = FactoryBot.build(:user, email: nil)
