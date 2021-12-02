@@ -1,7 +1,6 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe "Users", type: :request do
-  describe "GET /index" do
-
-  end
-end
+# RSpec.describe "Users", type: :request do
+#   describe "GET /index" do
+#   end
+# end
