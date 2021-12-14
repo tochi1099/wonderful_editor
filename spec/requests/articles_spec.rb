@@ -73,7 +73,7 @@ RSpec.describe "Api::V1::Articles", type: :request do
 
     context "不適切なパラメーターが送信された時" do
       let(:params) { attributes_for(:article) }
-      fit "エラーする" do
+      it "エラーする" do
         expect { subject }.to raise_error(ActionController::ParameterMissing)
       end
     end
