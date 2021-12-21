@@ -12,12 +12,13 @@ module Api::V1
     end
 
     def create
-      # binding.pry
-      # article = Article.new(article_params)
-      # article.user_id = current_user.id
       article = current_user.articles.create!(article_params)
+      render json: article, serializer: Api::V1::ArticleSerializer
+    end
 
-      # article.save!
+    def update
+      article = current_user.articles.find(params[:id])
+      article.update!(article_params)
       render json: article, serializer: Api::V1::ArticleSerializer
     end
 
