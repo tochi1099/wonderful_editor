@@ -13,27 +13,19 @@ RSpec.describe "Api::V1::Articles", type: :request do
       expect(res["data"].length).to eq(3)
       expect(res["data"][0].keys).to eq ["id", "type", "attributes", "relationships"]
     end
-
-
   end
 
   describe "Get api/v1/articles/:id " do
     subject { get(api_v1_article_path(article_id)) }
+
     let(:article_id) { article.id }
     let(:article) { create(:article) }
 
     context "指定した id の記事のデータが存在する場合" do
-
-      # let(:article_id) { article.id }
-      # let(:article) { create(:article) }
-
-
       it "記事の詳細を取得できる" do
         subject
 
         res = JSON.parse(response.body)
-
-        # expect(res["data"]["id"]).to eq article.id
         expect(res["data"]["attributes"]["title"]).to eq article.title
         expect(res["data"]["attributes"]["body"]).to eq article.body
         expect(res["data"]["attributes"]["updated-at"]).to be_present
@@ -51,12 +43,12 @@ RSpec.describe "Api::V1::Articles", type: :request do
   end
 
   describe "POST /api/v1/articles" do
-    subject { post(api_v1_articles_path, params: params)}
+    subject { post(api_v1_articles_path, params: params) }
 
     let(:params) { { article: attributes_for(:article) } }
     let(:current_user) { create(:user) }
 
-    before{ allow_any_instance_of(Api::V1::BaseApiController).to receive(:current_user).and_return(current_user) }
+    before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:current_user).and_return(current_user) }
 
     context "適切なパラメーターが送信された時" do
 
@@ -78,5 +70,33 @@ RSpec.describe "Api::V1::Articles", type: :request do
       end
     end
 
+  end
+
+  describe "PATCH /api/v1/articles/:id" do
+    subject { patch(api_v1_article_path(article.id), params: params) }
+
+    let(:params) { { article: attributes_for(:article) } }
+    let(:current_user) { create(:user) }
+
+    before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:current_user).and_return(current_user) }
+
+    context "自分が書いた記事のレコードを更新しようとしたとき" do
+      let(:article) { create(:article, user: current_user) }
+
+      it "記事の内容を更新できる" do
+        expect { subject }.to change { article.reload.body }.from(article.body).to(params[:article][:body]) &
+                              change { article.reload.title }.from(article.title).to(params[:article][:title])
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "他人が書いた記事のレコードを更新しようとしたとき" do
+      let(:other_user) { create(:user) }
+      let(:article) { create(:article, user: other_user) }
+
+      it "エラーする" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end
