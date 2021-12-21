@@ -1,6 +1,5 @@
 module Api::V1
   class ArticlesController < Api::V1::BaseApiController
-
     def index
       articles = Article.order(updated_at: "DESC")
       render json: articles, each_serializer: Api::V1::ArticlePreviewSerializer
@@ -23,8 +22,10 @@ module Api::V1
     end
 
     private
+
       def article_params
         params.require(:article).permit(:title, :body)
       end
+
   end
 end
