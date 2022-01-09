@@ -51,10 +51,7 @@ RSpec.describe "Api::V1::Articles", type: :request do
     before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:current_user).and_return(current_user) }
 
     context "適切なパラメーターが送信された時" do
-
-
       it "ユーザーのレコードが作成される" do
-
         expect { subject }.to change { Article.where(user_id: current_user.id).count }.by(1)
         res = JSON.parse(response.body)
         expect(res["data"]["attributes"]["title"]).to eq params[:article][:title]
@@ -69,7 +66,6 @@ RSpec.describe "Api::V1::Articles", type: :request do
         expect { subject }.to raise_error(ActionController::ParameterMissing)
       end
     end
-
   end
 
   describe "PATCH /api/v1/articles/:id" do
@@ -93,6 +89,32 @@ RSpec.describe "Api::V1::Articles", type: :request do
     context "他人が書いた記事のレコードを更新しようとしたとき" do
       let(:other_user) { create(:user) }
       let(:article) { create(:article, user: other_user) }
+
+      it "エラーする" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
+  describe "DELETE /api/v1/articles/:id" do
+    subject { delete(api_v1_article_path(article_id)) }
+
+    let(:article_id) { article.id }
+    let(:current_user) { create(:user) }
+
+    before { allow_any_instance_of(Api::V1::BaseApiController).to receive(:current_user).and_return(current_user) }
+
+    context "自分が書いた記事のレコードを削除しようとしたとき" do
+      let!(:article) { create(:article, user: current_user) }
+
+      it "記事を削除する事ができる" do
+        expect { subject }.to change { Article.count }.by(-1)
+      end
+    end
+
+    context "他人の書いた記事のレコードを削除しようとしたとき" do
+      let(:other_user) { create(:user) }
+      let!(:article) { create(:article, user: other_user) }
 
       it "エラーする" do
         expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
