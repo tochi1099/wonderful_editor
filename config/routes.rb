@@ -7,6 +7,10 @@ Rails.application.routes.draw do
         registrations: "api/v1/auth/registrations",
       }
       resources :articles
+
+      namespace :auth do
+        resources :sessions, only: %i[index]
+      end
     end
   end
 end
