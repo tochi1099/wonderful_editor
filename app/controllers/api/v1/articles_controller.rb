@@ -1,5 +1,7 @@
 module Api::V1
   class ArticlesController < Api::V1::BaseApiController
+    before_action :authenticate_user!, only: [:create, :update, :destroy]
+
     def index
       articles = Article.order(updated_at: "DESC")
       render json: articles, each_serializer: Api::V1::ArticlePreviewSerializer
