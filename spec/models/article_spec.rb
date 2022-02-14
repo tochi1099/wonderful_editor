@@ -22,4 +22,24 @@ RSpec.describe Article, type: :model do
       expect(article).to be_invalid
     end
   end
+
+  context "記事が下書きのとき" do
+    let(:article) { build(:article, user: current_user) }
+    let(:current_user) { create(:user) }
+
+    it "下書き記事を保存できる" do
+      expect(article).to be_valid
+      expect(article.status).to eq "draft"
+    end
+  end
+
+  context "記事を公開するとき" do
+    let(:article) { build(:article, status: "published", user: current_user) }
+    let(:current_user) { create(:user) }
+
+    it "公開する記事を保存できる" do
+      expect(article).to be_valid
+      expect(article.status).to eq "published"
+    end
+  end
 end
