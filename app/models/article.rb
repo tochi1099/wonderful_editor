@@ -6,5 +6,5 @@ class Article < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :article_likes, dependent: :destroy
 
-  enum status: { draft: 0, published: 1 }
+  enum status: { draft: "draft", published: "published" }
 end
