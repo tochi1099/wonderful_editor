@@ -13,9 +13,9 @@ RSpec.describe "Api::V1::Article::Drafts", type: :request do
       it " 下書きの記事の一覧を取得する事ができる " do
         subject
         res = JSON.parse(response.body)
-        expect(res["data"].length).to eq(1)
+        expect(res.length).to eq(1)
         expect(response).to have_http_status(:ok)
-        expect(res["data"][0].keys).to eq ["id", "type", "attributes", "relationships"]
+        expect(res[0].keys).to eq ["id", "title", "body", "updated_at", "status", "user"]
         expect(article).to be_draft
       end
     end
@@ -33,11 +33,11 @@ RSpec.describe "Api::V1::Article::Drafts", type: :request do
         it "記事の詳細を取得できる" do
           subject
           res = JSON.parse(response.body)
-          expect(res["data"]["id"]).to eq article.id.to_s
-          expect(res["data"]["attributes"]["title"]).to eq article.title
-          expect(res["data"]["attributes"]["body"]).to eq article.body
-          expect(res["data"]["attributes"]["updated-at"]).to be_present
-          expect(res["data"]["attributes"]["status"]).to eq article.status
+          expect(res["id"]).to eq article.id
+          expect(res["title"]).to eq article.title
+          expect(res["body"]).to eq article.body
+          expect(res["updated_at"]).to be_present
+          expect(res["status"]).to eq article.status
           expect(response).to have_http_status(:ok)
         end
       end
