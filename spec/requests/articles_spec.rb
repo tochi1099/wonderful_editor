@@ -15,11 +15,9 @@ RSpec.describe "Api::V1::Articles", type: :request do
       subject
       res = JSON.parse(response.body)
       expect(response).to have_http_status(:ok)
-      expect(res["data"].length).to eq(3)
-      expect(res["data"][0].keys).to eq ["id", "type", "attributes", "relationships"]
-      expect(article1).to be_published
-      expect(article2).to be_published
-      expect(article3).to be_published
+      expect(res.length).to eq(3)
+      expect(res[0].keys).to eq ["id", "title", "body", "updated_at", "status", "user"]
+      expect(res.map {|d| d["id"] }).to eq [article3.id, article2.id, article1.id]
     end
   end
 
@@ -37,11 +35,12 @@ RSpec.describe "Api::V1::Articles", type: :request do
         it "記事の詳細を取得できる" do
           subject
           res = JSON.parse(response.body)
-          expect(res["data"]["id"]).to eq article.id.to_s
-          expect(res["data"]["attributes"]["title"]).to eq article.title
-          expect(res["data"]["attributes"]["body"]).to eq article.body
-          expect(res["data"]["attributes"]["updated-at"]).to be_present
-          expect(response).to have_http_status(:ok)
+          expect(res["id"]).to eq article.id
+          expect(res["title"]).to eq article.title
+          expect(res["body"]).to eq article.body
+          expect(res["updated_at"]).to be_present
+          expect(res["user"]["id"]).to eq article.user.id
+          expect(res["user"].keys).to eq ["id", "name", "email"]
         end
       end
 
@@ -74,8 +73,8 @@ RSpec.describe "Api::V1::Articles", type: :request do
       it "公開する記事のレコードが作成される" do
         expect { subject }.to change { Article.where(user_id: current_user.id).count }.by(1)
         res = JSON.parse(response.body)
-        expect(res["data"]["attributes"]["title"]).to eq params[:article][:title]
-        expect(res["data"]["attributes"]["body"]).to eq params[:article][:body]
+        expect(res["title"]).to eq params[:article][:title]
+        expect(res["body"]).to eq params[:article][:body]
         expect(response).to have_http_status(:ok)
       end
     end
@@ -85,8 +84,8 @@ RSpec.describe "Api::V1::Articles", type: :request do
       it "下書きの記事が作成される" do
         expect { subject }.to change { Article.count }.by(1)
         res = JSON.parse(response.body)
-        expect(res["data"]["attributes"]["title"]).to eq params[:article][:title]
-        expect(res["data"]["attributes"]["body"]).to eq params[:article][:body]
+        expect(res["title"]).to eq params[:article][:title]
+        expect(res["body"]).to eq params[:article][:body]
         expect(response).to have_http_status(:ok)
       end
     end

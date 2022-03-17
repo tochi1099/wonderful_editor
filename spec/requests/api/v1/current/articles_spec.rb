@@ -18,12 +18,12 @@ RSpec.describe "Api::V1::Current::Articles", type: :request do
       it "自分が書いた公開済みの記事一覧を取得できる" do
         subject
         res = JSON.parse(response.body)
-        expect(res["data"].length).to eq(3)
-        expect(res["data"][0].keys).to eq ["id", "type", "attributes", "relationships"]
-        expect(res["data"][0]["relationships"]["user"]["data"]["id"]).to eq current_user.id.to_s
-        expect(article1).to be_published
-        expect(article2).to be_published
-        expect(article3).to be_published
+        expect(res.length).to eq(3)
+        expect(res.map {|d| d["id"] }).to eq [article3.id, article2.id, article1.id]
+        expect(res[0]["user"]["id"]).to eq current_user.id
+        expect(res[0]["user"]["name"]).to eq current_user.name
+        expect(res[0]["user"]["email"]).to eq current_user.email
+        expect(response).to have_http_status(:ok)
       end
     end
   end
